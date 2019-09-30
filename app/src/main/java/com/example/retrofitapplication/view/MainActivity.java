@@ -1,11 +1,14 @@
 package com.example.retrofitapplication.view;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,22 +18,31 @@ import com.example.retrofitapplication.viewmodel.MainViewModel;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  View.OnClickListener{
 
     //Declared variable for viewModel instance
     private MainViewModel viewModel;
     //Declared variable for recycleerview instance
     private RecyclerView rvShibes;
 
+    private Boolean isGrid;
+    RecyclerView.LayoutManager manager;
+
+    public Button btnSwitch;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); //calls onCreate of the AppCompatActivity . passes saved instance.
         setContentView(R.layout.activity_main); //attached the layout "activity_main" to our main activity
 
+
+        btnSwitch = findViewById(R.id.btn_switch);
         //initialize the viewModel instance
         viewModel = ViewModelProviders  //Make sure it is the one with an s at the end.
                 .of(this)  //method that needs context to give to the ViewModel
@@ -40,21 +52,15 @@ public class MainActivity extends AppCompatActivity {
         rvShibes = findViewById(R.id.rv_shibes);
 
         //Declare and instantiate a LinearLayoutManager object called manager, gives manager context from Main Activity.
-        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager = new LinearLayoutManager(this);
+        isGrid = false;
         //tell the recyclerView which layout manager to use (the one we created)
         rvShibes.setLayoutManager(manager);
 
         //because the height of the imageView in shibe_item is a fixed 200dp
-        rvShibes.setHasFixedSize(true);
+        rvShibes.setHasFixedSize(false);
 
-
-
-
-
-
-
-        viewModel
-                .getShibes(15) //the activity asks the viewModel for some Shibes and returns the Call Object.
+        viewModel.getShibes(15) //the activity asks the viewModel for some Shibes and returns the Call Object.
                 .enqueue(new Callback<List<String>>() { //a method of the Call Object to be called once the viewModel gets the information we asked for.
                     @Override
                     public void onResponse(Call<List<String>> call, Response<List<String>> response) {  //ViewModel had what we asked for and all is well
@@ -73,6 +79,23 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                btnSwitch.setOnClickListener(this::onClick);
+
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (isGrid) {
+            //Declare and instantiate a LinearLayoutManager object called manager, gives manager context from Main Activity.
+            manager = new LinearLayoutManager(this);
+            isGrid = false;
+        } else {
+            //tell the recyclerView which layout manager to use (the one we created)
+            manager = new GridLayoutManager(this, 4);
+            isGrid = true;
+        }
+        rvShibes.setLayoutManager(manager);
 
 
     }

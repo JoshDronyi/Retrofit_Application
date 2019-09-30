@@ -56,7 +56,7 @@ public class ShibeAdapter extends RecyclerView.Adapter<ShibeAdapter.ShibeViewHol
         //Gives the static Glide Object context
         Glide.with(context)
                 .load(shibeUrl)//Gives the glide object the url of which shibe to load.
-                .centerCrop() //Formats how the picture fits into the image view.
+                .circleCrop() //Formats how the picture fits into the image view.
                 .into(holder.ivShibeImage); //tells the glide object which view object to load the shibe picture into.
     }
 
